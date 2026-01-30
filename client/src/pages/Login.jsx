@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react"; 
 
-const Login = ({ onNavigate }) => {
+const Login = ({ onNavigate, onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); 
@@ -18,6 +18,12 @@ const Login = ({ onNavigate }) => {
       });
       const data = await res.json();
       if (data.status === "ok") {
+        const { token, user } = data;
+        try {
+          localStorage.setItem("token", token);
+          localStorage.setItem("civixUser", JSON.stringify(user));
+        } catch (err) {}
+        if (onLoginSuccess) onLoginSuccess(user, token);
         onNavigate("dashboard");
       } else {
         alert(data.message || "Invalid credentials");

@@ -21,7 +21,13 @@ const sendOTPMail = async (email, otp) => {
     subject: "CivixConnect Verification Code",
     html: `<h3>Your OTP is: <b>${otp}</b></h3>`,
   };
-  return transporter.sendMail(mailOptions);
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    return { success: true, info };
+  } catch (err) {
+    console.error('Mailer error:', err && err.message ? err.message : err);
+    return { success: false, error: err };
+  }
 };
 
 module.exports = sendOTPMail;
